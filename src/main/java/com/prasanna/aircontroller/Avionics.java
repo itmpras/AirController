@@ -1,4 +1,4 @@
-package com.prasanna.aircontroller.messages;
+package com.prasanna.aircontroller;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
@@ -6,6 +6,9 @@ import akka.event.LoggingAdapter;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.prasanna.aircontroller.ControlSurfaces;
+import com.prasanna.aircontroller.messages.ControlSurfaceInstance;
+import com.prasanna.aircontroller.messages.StartPlane;
+import com.prasanna.aircontroller.messages.StickBack;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -18,8 +21,8 @@ public class Avionics extends UntypedActor {
     ActorRef controlSurface;
     LoggingAdapter log;
 
-
     public Avionics(ActorRef plane) {
+
         this.plane = plane;
         log = getContext().system().log();
 
@@ -31,6 +34,7 @@ public class Avionics extends UntypedActor {
         if (o instanceof StartPlane) {
             log.info("Starting Plane ");
 
+            plane.tell(o, self());
 
             //plane.tell(new GiveMeControl(), self());
 
@@ -45,7 +49,6 @@ public class Avionics extends UntypedActor {
 
             controlSurface.tell(new StickBack(0.5F), self()); */
 
-
         } else if (o instanceof ControlSurfaceInstance) {
 
             log.info("Received Controls ");
@@ -53,6 +56,7 @@ public class Avionics extends UntypedActor {
             controlSurface = controlSurfaceInstance.getControlSurface();
 
             controlSurface.tell(new StickBack(0.5F), self());
+            plane.tell("RandomMessage", self());
         }
 
     }

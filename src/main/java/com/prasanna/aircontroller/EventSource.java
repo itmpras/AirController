@@ -13,14 +13,17 @@ public class EventSource {
     List<ActorRef> actorRefs;
 
     public EventSource() {
+
         this.actorRefs = Lists.newArrayList();
     }
 
     public void registerActor(ActorRef actorRef) {
+
         actorRefs.add(actorRef);
     }
 
     public void unregisterActor(ActorRef actorRef) {
+
         actorRefs.remove(actorRef);
     }
 
@@ -28,6 +31,7 @@ public class EventSource {
 
         for (ActorRef actorRef : actorRefs) {
             actorRef.tell(event, sender);
+            sender.tell("Received", ActorRef.noSender());
         }
     }
 }
